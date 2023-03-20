@@ -2,14 +2,13 @@ package com.example.kursach.controller;
 
 import com.example.kursach.model.Question;
 import com.example.kursach.service.ExaminerService;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
+
 @RestController
-@RequestMapping("exam/java")
+@RequestMapping("exam")
 public class ExamController {
     private final ExaminerService examinerService;
 
@@ -17,8 +16,8 @@ public class ExamController {
         this.examinerService = examinerService;
     }
 
-    @RequestMapping("/exam")
-    public Collection<Question> getQuestions(@RequestParam("amount") int amount){
+    @GetMapping("/get/{amount}")
+    public Collection<Question> getQuestions(@PathVariable("amount") int amount){
         return examinerService.getQuestions(amount);
     }
 }

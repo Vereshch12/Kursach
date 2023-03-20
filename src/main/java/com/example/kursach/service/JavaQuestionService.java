@@ -2,55 +2,55 @@ package com.example.kursach.service;
 
 import com.example.kursach.ExceptionQuestion;
 import com.example.kursach.model.Question;
+import com.example.kursach.repository.QuestionRepository;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
 
 @Service
-public class JavaQuestionService implements QuestionService {
-    private Set<Question> allQuestions;
+public class JavaQuestionService implements QuestionService{
+    private final QuestionRepository questions;
+    private final Random random = new Random();
 
-    public JavaQuestionService(Set<Question> allQuestions) {
-        this.allQuestions = allQuestions;
+
+    public JavaQuestionService(@Qualifier("javaQuestionRepository") QuestionRepository questions) {
+        this.questions = questions;
+    }
+
+
+    @Override
+    public Question add(String question, String answer){
+        return add(new Question(question, answer));
     }
 
     @Override
-    public Question add(String question, String answer) throws ExceptionQuestion {
-        if (question == null || question.isBlank() || answer.isBlank() || answer == null)
-            throw new ExceptionQuestion("Чтобы добавить добавить вопрос, необходимо не оставлять поля вопроса и ответа пустыми!");
-        Question questionAndAnswer = new Question(question, answer);
-        return add(questionAndAnswer);
-    }
-
-    @Override
-    public Question add(Question question) {
-        allQuestions.add(question);
+    public Question add(Question question){
+        if (questions.getAll().contains(question)){
+            throw new ExceptionQuestion("Такой вопрос есть в списке вопросов для экзамена");
+        }
+        questions.add(question);
         return question;
     }
 
     @Override
     public Question remove(Question question) {
-        allQuestions.remove(question);
+        if (!questions.getAll().contains(question)) {
+            throw new ExceptionQuestion("Данного вопроса нет в списке вопросов для экзамена");
+        }
+        questions.remove(question);
         return question;
     }
 
     @Override
     public Collection<Question> getAll() {
-        return allQuestions;
+        return questions.getAll();
     }
 
     @Override
     public Question getRandomQuestion() {
-        Random random = new Random();
-        int index = random.nextInt(allQuestions.size());
-        int i = 0;
-        while (i != index){
-            allQuestions.iterator().next();
-            i++;
-        }
-        return allQuestions.iterator().next();
+        return new ArrayList<>(questions.getAll()).get(random.nextInt(questions.getAll().size()));
     }
 }

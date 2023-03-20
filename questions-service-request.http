@@ -1,5 +1,5 @@
 ### Добавить вопрос 1
-GET http://localhost:8080/exam/java/add?question=QuestionText1&answer=QuestionAnswer1
+GET http://localhost:8080/exam/java/add?question=QuestionText&answer=QuestionAnswer
 
 ### Добавить вопрос 2
 GET http://localhost:8080/exam/java/add?question=QuestionText2&answer=QuestionAnswer2
@@ -20,4 +20,4 @@ GET http://localhost:8080/exam/java/remove?question=QuestionText2&answer=Questio
 GET http://localhost:8080/exam/java
 
 ### Экзамен
-GET http://localhost:8080/exam/java/exam?amount=2
+GET http://localhost:8080/exam/get/2

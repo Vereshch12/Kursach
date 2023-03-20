@@ -1,34 +1,29 @@
 package com.example.kursach.service;
 
+import com.example.kursach.ExceptionQuestion;
 import com.example.kursach.model.Question;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
+@Service
 public class ExaminerServiceImpl implements ExaminerService{
-    private final QuestionService questionService;
+    private final List<QuestionService> questionService;
 
-    public ExaminerServiceImpl(QuestionService questionService) {
-        this.questionService = questionService;
-    }
-
-    private void generate(Set<Question> examsQuestions){
-        Question question = questionService.getRandomQuestion();
-        if (examsQuestions.contains(question)){
-            generate(examsQuestions);
-        }else examsQuestions.add(question);
+    public ExaminerServiceImpl(@Qualifier("javaQuestionService") QuestionService questionService) {
+        this.questionService = List.of(questionService);
     }
 
     @Override
     public Collection<Question> getQuestions(int amount) {
-        if (amount <= 0 || amount > questionService.getAll().size()){
-            throw new RuntimeException();
+        if (amount > questionService.size() || amount <=0) {
+            throw new ExceptionQuestion("Количество вопросов превышает количество вопросов в списке");
         }
-        Set<Question> examsQuestions = new HashSet<>();
-        while (examsQuestions.size() != amount){
-            generate(examsQuestions);
+        Set<Question> questions = new HashSet<>();
+        while (questions.size() < amount){
+            questions.add(questionService.get(amount).getRandomQuestion());
         }
-        return examsQuestions;
+        return questions;
     }
 }
